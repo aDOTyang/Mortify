@@ -38,14 +38,9 @@ function calcTopMortgage() {
   }
 
   // top level display only - hard coded values
-  topArray["monthNum"] = monthNum;
   topArray["monthlyAmt"] = monthlyAmt;
-  topArray["principalAmt"] = principalAmt;
-  topArray["interestAmt"] = interestAmt;
   topArray["sumInterest"] = sumInterest;
-  topArray["remBalance"] = remBalance;
   topArray["loanAmt"] = loanAmt;
-  topArray["loanTerm"] = loanTerm;
   topArray["totalCost"] = loanAmt + sumInterest;
 
   return topArray;
@@ -53,21 +48,21 @@ function calcTopMortgage() {
 
 // displayMonthly(monthlyAmt, loanAmt, sumInterest, totalPrincipal);
 function displayMonthly() {
-  let mortData = calcTopMortgage();
+  let topArray = calcTopMortgage();
 
-  document.getElementById("monPayment").innerHTML = mortData[
+  document.getElementById("monPayment").innerHTML = topArray[
     "monthlyAmt"
   ].toLocaleString("en-us", { style: "currency", currency: "USD" });
 
-  document.getElementById("totalPrincipal").innerHTML = mortData[
+  document.getElementById("totalPrincipal").innerHTML = topArray[
     "loanAmt"
   ].toLocaleString("en-us", { style: "currency", currency: "USD" });
 
-  sumInterest = document.getElementById("totalInterest").innerHTML = mortData[
+  sumInterest = document.getElementById("totalInterest").innerHTML = topArray[
     "sumInterest"
   ].toLocaleString("en-us", { style: "currency", currency: "USD" });
 
-  document.getElementById("totalCost").innerHTML = mortData[
+  document.getElementById("totalCost").innerHTML = topArray[
     "totalCost"
   ].toLocaleString("en-us", { style: "currency", currency: "USD" });
 }
