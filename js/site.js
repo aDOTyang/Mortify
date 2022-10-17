@@ -9,7 +9,15 @@ function Mortify() {
   let loanTerm = parseInt(document.getElementById("loanTerm").value, 10);
   let intRate = parseFloat(document.getElementById("intRate").value);
 
-  return loanAmt, loanTerm, intRate;
+  if (loanAmt == NaN || loanTerm == NaN || intRate == NaN) {
+    Swal.fire({
+      icon: "error",
+      title: "Oops...",
+      text: "Something went wrong!",
+    });
+  } else {
+    return loanAmt, loanTerm, intRate;
+  }
 } */
 
 // calculates total monthly payment
@@ -129,5 +137,4 @@ function calcBotMortgage() {
 
     mortifyTable.appendChild(inputRow);
   }
-  return mortArray;
 }
