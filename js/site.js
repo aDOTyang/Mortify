@@ -1,7 +1,4 @@
 function Mortify() {
-  /* let formInput = pullMortify();
-  formInput.innerHTML = ""; */
-
   displayMonthly();
   calcBotMortgage();
 }
@@ -91,8 +88,6 @@ function calcBotMortgage() {
   const mortifyTable = document.getElementById("mortifyTable");
   mortifyTable.innerHTML = "";
 
-  const inputRow = document.importNode(template.content, true);
-
   // calculates the total monthly payment amount
   let monthlyAmt =
     (loanAmt * intAnnual) / (1 - Math.pow(1 + intAnnual, -1 * loanTerm));
@@ -103,7 +98,7 @@ function calcBotMortgage() {
     interestAmt = remBalance * intAnnual; // calculate interest payment
     sumInterest += interestAmt; // sums the running interest paid
     principalAmt = monthlyAmt - interestAmt; // calculates principal payment
-    remBalance = remBalance - principalAmt; // calculate remaining balance total
+    remBalance = Math.abs(remBalance - principalAmt); // calculate remaining balance total
 
     let mortArray = [];
     mortArray.push(monthNum);
@@ -112,8 +107,9 @@ function calcBotMortgage() {
     mortArray.push(sumInterest);
     mortArray.push(remBalance);
 
+    let inputRow = document.importNode(template.content, true);
     let inputCol = inputRow.querySelectorAll("td");
-    
+
     inputCol[0].textContent = mortArray[0];
     inputCol[1].textContent = monthlyAmt.toLocaleString("en-us", {
       style: "currency",
@@ -138,48 +134,5 @@ function calcBotMortgage() {
 
     mortifyTable.appendChild(inputRow);
   }
-
   return mortArray;
 }
-
-/* function displayMortgage() {
-  // pulls template from template tag
-  const template = document.getElementById("mortify-template");
-  // tells HTML where to write template insertion
-  const mortifyTable = document.getElementById("mortifyTable");
-  mortifyTable.innerHTML = "";
-
-  let mortData = calcMortgage();
-
-  // sets inputRow equal to template layout for formatting
-  const inputRow = document.importNode(template.content, true);
-  for (i = 0; i < loanTerm; i++) {
-    let inputCol = inputRow.querySelectorAll("td");
-
-    inputCol[0].textContent = monthNumArr[i];
-    inputCol[1].textContent = mortData["monthlyAmt"].toLocaleString("en-us", {
-      style: "currency",
-      currency: "USD",
-    });
-    inputCol[2].textContent = principalAmtArr[i].toLocaleString("en-us", {
-      style: "currency",
-      currency: "USD",
-    });
-    inputCol[3].textContent = interestAmtArr[i].toLocaleString("en-us", {
-      style: "currency",
-      currency: "USD",
-    });
-    inputCol[4].textContent = sumInterestArr[i].toLocaleString("en-us", {
-      style: "currency",
-      currency: "USD",
-    });
-    inputCol[5].textContent = remBalanceArr[i].toLocaleString("en-us", {
-      style: "currency",
-      currency: "USD",
-    });
-
-    mortifyTable.appendChild(inputRow);
-  }
-}
-
- */
