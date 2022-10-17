@@ -1,94 +1,145 @@
-function mortify() {
-  let formInput = pullMortify();
-  formInput.innerHTML = "";
+function Mortify() {
+  /* let formInput = pullMortify();
+  formInput.innerHTML = ""; */
 
-  calcMortgage();
   displayMonthly();
   displayMortgage();
 }
 
 // pulls info from input form
-function pullMortify() {
-  let mortArray = [];
+/* function pullMortify() {
+  let loanAmt = parseInt(document.getElementById("loanAmt").value, 10);
+  let loanTerm = parseInt(document.getElementById("loanTerm").value, 10);
+  let intRate = parseFloat(document.getElementById("intRate").value);
 
-  let loanAmt = document.getElementById("loanAmt").value;
-  let loanTerm = document.getElementById("loanTerm").value;
-  let intRate = document.getElementById("intRate").value;
-
-  mortArray.push(loanAmt);
-  mortArray.push(loanTerm);
-  mortArray.push(intRate);
-
-  return mortArray;
-}
+  return loanAmt, loanTerm, intRate;
+} */
 
 // calculates total monthly payment
-function calcMortgage(mortArray) {
-  pullMortify();
+function calcMortgage() {
+  let loanAmt = parseInt(document.getElementById("loanAmt").value, 10);
+  let loanTerm = parseInt(document.getElementById("loanTerm").value, 10);
+  let intRate = parseFloat(document.getElementById("intRate").value);
+  /* let monthNumArr = [];
+  let principalAmtArr = [];
+  let interestAmtArr = [];
+  let sumInterestArr = [];
+  let remBalanceArr = []; */
+  let mortObj = {
+    monthNumArr: [],
+    principalAmtArr: [],
+    sumInterestArr: [],
+    remBalanceArr: [],
+  };
 
-  let loanAmt = mortArray[0];
-  let loanTerm = mortArray[1];
-  let intRate = mortArray[2] / 100;
+  let remBalance = loanAmt; // remBalance starts at full loan amount (no payments)
+  let sumInterest = 0; // ensures sumInterest value not carried over
+  let principalAmt = 0; // ensures principalAmt value not carried over
+  let intAnnual = intRate / 1200;
 
   // calculates the total monthly payment amount
   let monthlyAmt =
-    (loanAmt * (intRate / 1200)) /
-    (1 - (1 + intRate / 100 / 1200) ** -loanTerm);
+    (loanAmt * intAnnual) / (1 - Math.pow(1 + intAnnual, -1 * loanTerm));
 
   // calculates remaining balance, interest & principal payments
-  let remBalance = loanAmt; // remBalance starts at full loan amount (no payments)
-  let sumInterest = 0; // ensures sumInterest begins at 0
+  for (i = 1; i <= loanTerm; i++) {
+    monthNum = i; // establishes monthly count
+    interestAmt = remBalance * intAnnual; // calculate interest payment
+    sumInterest += interestAmt; // sums the running interest paid
+    principalAmt = monthlyAmt - interestAmt; // calculates principal payment
+    remBalance = remBalance - principalAmt; // calculate remaining balance total
 
-  for (i = 1; i < loanTerm; i++)
-    if (loanAmt > remBalance) {
-      interestAmt = remainingBal * (intRate / 1200); // calculate interest payment
-      sumInterest += sumInterest + interestAmt; // sums the running interest paid
-      principalAmt = monthlyAmt - interestAmt; // calculates principal payment
-      remBalance = remBalance - principalAmt; // calculate remaining balance total
-    } else {
-      return remBalance;
-    }
+    mortObj.monthNumArr.push(monthNum);
+    mortObj.principalAmtArr.push(principalAmt);
+    /*   mortObj.interestAmtArr.push(interestAmt); */
+    mortObj.sumInterestArr.push(sumInterest);
+    mortObj.remBalanceArr.push(remBalance);
 
-  return i, monthlyAmt, principalAmt, interestAmt, sumInterest, remBalance;
+    mortObj["monthNum"] = monthNum;
+    mortObj["monthlyAmt"] = monthlyAmt;
+    mortObj["principalAmt"] = principalAmt;
+    mortObj["interestAmt"] = interestAmt;
+    mortObj["sumInterest"] = sumInterest;
+    mortObj["remBalance"] = remBalance;
+  }
+
+  /* mortObj.push(monthNumArr); */
+  mortObj["loanAmt"] = loanAmt;
+  mortObj["loanTerm"] = loanTerm;
+  mortObj["totalCost"] = loanAmt + sumInterest;
+
+  return mortObj;
 }
 
+// displayMonthly(monthlyAmt, loanAmt, sumInterest, totalPrincipal);
 function displayMonthly() {
-  pullMortify();
-  /*   let totalPrincipal = 0;
-  let totalInterest = 0;
-  let totalCost = 0; */
-  /* 
-  let monthlyAmt = calcMonthly(mortArray);
-  document.getElementById("monPayment").innerHTML = monthlyAmt; */
+  let mortData = calcMortgage();
 
-  totalPrincipal = loanAmt;
-  document.getElementById("totalPrincipal").innerHTML =
-    totalPrincipal.value.toLocaleString();
+  document.getElementById("monPayment").innerHTML = mortData[
+    "monthlyAmt"
+  ].toLocaleString("en-us", { style: "currency", currency: "USD" });
 
-  document.getElementById("totalInterest").innerHTML =
-    sumInterest.value.toLocaleString();
+  document.getElementById("totalPrincipal").innerHTML = mortData[
+    "loanAmt"
+  ].toLocaleString("en-us", { style: "currency", currency: "USD" });
 
-  totalCost = totalPrincipal + totalInterest;
-  document.getElementById("totalCost").innerHTML =
-    totalCost.value.toLocaleString();
+  sumInterest = document.getElementById("totalInterest").innerHTML = mortData[
+    "sumInterest"
+  ].toLocaleString("en-us", { style: "currency", currency: "USD" });
+
+  document.getElementById("totalCost").innerHTML = mortData[
+    "totalCost"
+  ].toLocaleString("en-us", { style: "currency", currency: "USD" });
 }
 
-/* function displayMortgage() {
-  pullMortify();
+function displayMortgage(mortObj) {
   // pulls template from template tag
   const template = document.getElementById("mortify-template");
   // tells HTML where to write template insertion
   const mortifyTable = document.getElementById("mortifyTable");
   mortifyTable.innerHTML = "";
+
+  /* let monthNumArr = [];
+  let principalAmtArr = [];
+  let interestAmtArr = [];
+  let sumInterestArr = [];
+  let remBalanceArr = [];
+ */
+  let mortData = calcMortgage(
+    monthNumArr,
+    principalAmtArr,
+    interestAmtArr,
+    sumInterestArr,
+    remBalanceArr
+  );
+
   // sets inputRow equal to template layout for formatting
-
-  for (let i = 0; i < array.length; i++) {
-    const inputRow = document.importNode(template.content, true);
-
+  const inputRow = document.importNode(template.content, true);
+  for (i = 0; i < loanTerm; i++) {
     let inputCol = inputRow.querySelectorAll("td");
-    inputCol[0].textContent = inputMortify[i].loanAmt;
-    inputCol[1].textContent = inputMortify[i].loanTerm;
-    inputCol[2].textContent = inputMortify[i].intRate;
-    inputCol[3].textContent = inputMortify[i].attendance;
+
+    inputCol[0].textContent = monthNumArr[i];
+    inputCol[1].textContent = mortData["monthlyAmt"].toLocaleString("en-us", {
+      style: "currency",
+      currency: "USD",
+    });
+    inputCol[2].textContent = principalAmtArr[i].toLocaleString("en-us", {
+      style: "currency",
+      currency: "USD",
+    });
+    inputCol[3].textContent = interestAmtArr[i].toLocaleString("en-us", {
+      style: "currency",
+      currency: "USD",
+    });
+    inputCol[4].textContent = sumInterestArr[i].toLocaleString("en-us", {
+      style: "currency",
+      currency: "USD",
+    });
+    inputCol[5].textContent = remBalanceArr[i].toLocaleString("en-us", {
+      style: "currency",
+      currency: "USD",
+    });
+
+    mortifyTable.appendChild(inputRow);
   }
-} */
+}

@@ -80,7 +80,7 @@
 
     <main class="content container">
       <div class="row">
-        <div class="col-6">
+        <div class="col-12 col-md-6">
           <label><h2>Loan Calculator</h2></label>
           <form
             class="border border-2 border-black rounded-3 p-3 bg-light text-dark"
@@ -122,22 +122,22 @@
                 required />
             </div>
             <div class="text-end">
-              <button type="button" class="btn btn-primary" id="btnSubmit" onclick="mortify()">
+              <button type="button" class="btn btn-primary" id="btnSubmit" onclick="Mortify()">
                 Mortify Me!
               </button>
             </div>
           </form>
         </div>
-        <div class="col-6 text-center">
+        <div class="col-12 col-md-6 text-center mt-3 mt-md-0">
           <h2>Your Monthly Payments</h2>
-          <h2 id="monPayment" class="mb-5">$</h2>
+          <h2 id="monPayment" class="mb-3 mb-md-3"></h2>
           <div class="row">
-            <div class="col-6 text-start">Total Principal</div>
-            <div class="col-6" id="totalPrincipal">$</div>
-            <div class="col-6 text-start">Total Interest</div>
-            <div class="col-6" id="totalInterest">$</div>
-            <div class="col-6 text-start">Total Cost</div>
-            <div class="col-6" id="totalCost">$</div>
+            <div class="col-6 text-center">Total Principal</div>
+            <div class="col-6" id="totalPrincipal"></div>
+            <div class="col-6 text-center">Total Interest</div>
+            <div class="col-6" id="totalInterest"></div>
+            <div class="col-6 text-center">Total Cost</div>
+            <div class="col-6" id="totalCost"></div>
           </div>
         </div>
       </div>
@@ -184,7 +184,7 @@
     </footer>
 
     <template id="mortify-template">
-      <tr>
+      <tr class="text-center">
         <td></td>
         <td></td>
         <td></td>
