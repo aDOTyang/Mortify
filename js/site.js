@@ -4,87 +4,95 @@ function Mortify() {
 }
 
 // pulls info from input form
-/* function pullMortify() {
-  let loanAmt = parseInt(document.getElementById("loanAmt").value, 10);
-  let loanTerm = parseInt(document.getElementById("loanTerm").value, 10);
-  let intRate = parseFloat(document.getElementById("intRate").value);
+function pullMortify() {
+  let loanAmt = document.getElementById("loanAmt").value;
+  let loanTerm = document.getElementById("loanTerm").value;
+  let intRate = document.getElementById("intRate").value;
 
-  if (loanAmt == NaN || loanTerm == NaN || intRate == NaN) {
+  let mortArray = [];
+
+  if (loanAmt !== NaN && loanTerm !== NaN && intRate !== NaN) {
+    parseInt(loanAmt, 10);
+    parseInt(loanTerm, 10);
+    parseFloat(intRate);
+    mortArray.push(loanAmt, loanTerm, intRate);
+    return mortArray;
+  } else {
     Swal.fire({
       icon: "error",
       title: "Oops...",
-      text: "Something went wrong!",
+      text: "Something went wrong! Please only enter numbers.",
     });
-  } else {
-    return loanAmt, loanTerm, intRate;
   }
-} */
+}
 
 // calculates total monthly payment
-function calcTopMortgage() {
-  let loanAmt = parseInt(document.getElementById("loanAmt").value, 10);
-  let loanTerm = parseInt(document.getElementById("loanTerm").value, 10);
-  let intRate = parseFloat(document.getElementById("intRate").value);
+function calcTopMortgage(mortArray) {
+  mortArray = pullMortify(mortArray);
 
-  let remBalance = loanAmt; // remBalance starts at full loan amount (no payments)
+  let remBalance = mortArray[0]; // remBalance starts at full loan amount (no payments)
   let sumInterest = 0; // ensures sumInterest value not carried over
   let principalAmt = 0; // ensures principalAmt value not carried over
-  let intAnnual = intRate / 1200; // converts intRate input to annual interest rate
+  let intAnnual = mortArray[2] / 1200; // converts intRate input to annual interest rate
   let topArray = [];
 
   // calculates the total monthly payment amount
   let monthlyAmt =
-    (loanAmt * intAnnual) / (1 - Math.pow(1 + intAnnual, -1 * loanTerm));
+    (mortArray[0] * intAnnual) /
+    (1 - Math.pow(1 + intAnnual, -1 * mortArray[1]));
 
   // calculates remaining balance, interest & principal payments
-  for (i = 0; i < loanTerm; i++) {
+  for (i = 0; i < mortArray[1]; i++) {
     monthNum = i + 1; // establishes monthly count
     interestAmt = remBalance * intAnnual; // calculate interest payment
     sumInterest += interestAmt; // sums the running interest paid
     principalAmt = monthlyAmt - interestAmt; // calculates principal payment
-    remBalance = remBalance - principalAmt; // calculate remaining balance total
+    remBalance = Math.abs(remBalance - principalAmt); // calculate remaining balance total
   }
 
-  // top level display only - hard coded values
-  topArray["monthlyAmt"] = monthlyAmt;
-  topArray["sumInterest"] = sumInterest;
-  topArray["loanAmt"] = loanAmt;
-  topArray["totalCost"] = loanAmt + sumInterest;
+  totalCost = Number(mortArray[0]) + Number(sumInterest);
+
+  // top level display only
+  topArray.push(monthlyAmt);
+  topArray.push(sumInterest);
+  topArray.push(totalCost);
 
   return topArray;
 }
 
 // displayMonthly(monthlyAmt, loanAmt, sumInterest, totalPrincipal);
 function displayMonthly() {
+  let mortArray = pullMortify();
   let topArray = calcTopMortgage();
 
-  document.getElementById("monPayment").innerHTML = topArray[
-    "monthlyAmt"
-  ].toLocaleString("en-us", { style: "currency", currency: "USD" });
+  document.getElementById("monPayment").innerHTML = topArray[0].toLocaleString(
+    "en-us",
+    { style: "currency", currency: "USD" }
+  );
 
-  document.getElementById("totalPrincipal").innerHTML = topArray[
-    "loanAmt"
-  ].toLocaleString("en-us", { style: "currency", currency: "USD" });
+  document.getElementById("totalPrincipal").innerHTML =
+    mortArray[0].toLocaleString("en-us", {
+      style: "currency",
+      currency: "USD",
+    });
 
-  sumInterest = document.getElementById("totalInterest").innerHTML = topArray[
-    "sumInterest"
-  ].toLocaleString("en-us", { style: "currency", currency: "USD" });
+  sumInterest = document.getElementById("totalInterest").innerHTML =
+    topArray[1].toLocaleString("en-us", { style: "currency", currency: "USD" });
 
-  document.getElementById("totalCost").innerHTML = topArray[
-    "totalCost"
-  ].toLocaleString("en-us", { style: "currency", currency: "USD" });
+  document.getElementById("totalCost").innerHTML = topArray[2].toLocaleString(
+    "en-us",
+    { style: "currency", currency: "USD" }
+  );
 }
 
 // calculates total monthly payment
-function calcBotMortgage() {
-  let loanAmt = parseInt(document.getElementById("loanAmt").value, 10);
-  let loanTerm = parseInt(document.getElementById("loanTerm").value, 10);
-  let intRate = parseFloat(document.getElementById("intRate").value);
+function calcBotMortgage(mortArray) {
+  mortArray = pullMortify(mortArray);
 
-  let remBalance = loanAmt; // remBalance starts at full loan amount (no payments)
+  let remBalance = mortArray[0]; // remBalance starts at full loan amount (no payments)
   let sumInterest = 0; // ensures sumInterest value not carried over
   let principalAmt = 0; // ensures principalAmt value not carried over
-  let intAnnual = intRate / 1200; // converts intRate input to annual interest rate
+  let intAnnual = mortArray[2] / 1200; // converts intRate input to annual interest rate
 
   const template = document.getElementById("mortify-template");
 
@@ -93,10 +101,11 @@ function calcBotMortgage() {
 
   // calculates the total monthly payment amount
   let monthlyAmt =
-    (loanAmt * intAnnual) / (1 - Math.pow(1 + intAnnual, -1 * loanTerm));
+    (mortArray[0] * intAnnual) /
+    (1 - Math.pow(1 + intAnnual, -1 * mortArray[1]));
 
   // calculates remaining balance, interest & principal payments
-  for (i = 0; i < loanTerm; i++) {
+  for (i = 0; i < mortArray[1]; i++) {
     monthNum = i + 1; // establishes monthly count
     interestAmt = remBalance * intAnnual; // calculate interest payment
     sumInterest += interestAmt; // sums the running interest paid
@@ -104,11 +113,13 @@ function calcBotMortgage() {
     remBalance = Math.abs(remBalance - principalAmt); // calculate remaining balance total
 
     let mortArray = [];
-    mortArray.push(monthNum);
-    mortArray.push(principalAmt);
-    mortArray.push(interestAmt);
-    mortArray.push(sumInterest);
-    mortArray.push(remBalance);
+    mortArray.push(
+      monthNum,
+      principalAmt,
+      interestAmt,
+      sumInterest,
+      remBalance
+    );
 
     let inputRow = document.importNode(template.content, true);
     let inputCol = inputRow.querySelectorAll("td");

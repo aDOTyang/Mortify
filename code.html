@@ -63,7 +63,9 @@
                 >
               </li>
               <li class="nav-item">
-                <a class="nav-link" href="https://github.com/aDOTyang/Mortify">The Repo</a>
+                <a class="nav-link" href="https://github.com/aDOTyang/Mortify"
+                  >The Repo</a
+                >
               </li>
               <li class="nav-item">
                 <a class="nav-link" href="https://alexyang.netlify.app/"
@@ -86,18 +88,194 @@
         <div class="col-12 col-lg-8">
           <pre class="line-numbers">
                     <code class="language-js">
-                        function displayMessage() {
-                            let message = document.getElementById("message").value;
-                            alert(message);
+                      function Mortify() {
+                        displayMonthly();
+                        calcBotMortgage();}
+                      
+                        function pullMortify() {
+                          let loanAmt = document.getElementById("loanAmt").value;
+                          let loanTerm = document.getElementById("loanTerm").value;
+                          let intRate = document.getElementById("intRate").value;
+                        
+                          let mortArray = [];
+                        
+                          if (loanAmt !== NaN && loanTerm !== NaN && intRate !== NaN) {
+                            parseInt(loanAmt, 10);
+                            parseInt(loanTerm, 10);
+                            parseFloat(intRate);
+                            mortArray.push(loanAmt, loanTerm, intRate);
+                            return mortArray;
+                          } else {
+                            Swal.fire({
+                              icon: "error",
+                              title: "Oops...",
+                              text: "Something went wrong! Please only enter numbers."});
                           }
+                        }
+                      
+                      function calcTopMortgage(mortArray) {
+                        mortArray = pullMortify(mortArray);
+                      
+                        let remBalance = mortArray[0]; 
+                        let sumInterest = 0; 
+                        let principalAmt = 0;
+                        let intAnnual = mortArray[2] / 1200;
+                        let topArray = [];
+                      
+                        let monthlyAmt =
+                          (mortArray[0] * intAnnual) /
+                          (1 - Math.pow(1 + intAnnual, -1 * mortArray[1]));
+                      
+                        for (i = 0; i < mortArray[1]; i++) {
+                          monthNum = i + 1;
+                          interestAmt = remBalance * intAnnual; 
+                          sumInterest += interestAmt; 
+                          principalAmt = monthlyAmt - interestAmt; 
+                          remBalance = Math.abs(remBalance - principalAmt); 
+                      
+                        totalCost = mortArray[0] + sumInterest;
+                      
+                        topArray.push(monthlyAmt);
+                        topArray.push(sumInterest);
+                        topArray.push(totalCost);
+                      
+                        return topArray;}
+                      
+                      function displayMonthly() {
+                        let mortArray = pullMortify();
+                        let topArray = calcTopMortgage();
+                      
+                        document.getElementById("monPayment").innerHTML = topArray[0].toLocaleString(
+                          "en-us",
+                          { style: "currency", currency: "USD"});
+                      
+                        document.getElementById("totalPrincipal").innerHTML =
+                          mortArray[0].toLocaleString("en-us", {
+                            style: "currency",
+                            currency: "USD"});
+                      
+                        sumInterest = document.getElementById("totalInterest").innerHTML =
+                          topArray[1].toLocaleString("en-us", { style: "currency", currency: "USD" });
+                      
+                        document.getElementById("totalCost").innerHTML = topArray[2].toLocaleString(
+                          "en-us",
+                          { style: "currency", currency: "USD"});
+                      }
+                      
+                      function calcBotMortgage(mortArray) {
+                        mortArray = pullMortify(mortArray);
+                      
+                        let remBalance = mortArray[0]; 
+                        let sumInterest = 0; 
+                        let principalAmt = 0; 
+                        let intAnnual = mortArray[2] / 1200; 
+                      
+                        const template = document.getElementById("mortify-template");
+                      
+                        const mortifyTable = document.getElementById("mortifyTable");
+                        mortifyTable.innerHTML = "";
+                      
+                        let monthlyAmt =
+                          (mortArray[0] * intAnnual) /
+                          (1 - Math.pow(1 + intAnnual, -1 * mortArray[1]));
+
+                        for (i = 0; i < mortArray[1]; i++) {
+                          monthNum = i + 1; 
+                          interestAmt = remBalance * intAnnual;
+                          sumInterest += interestAmt;
+                          principalAmt = monthlyAmt - interestAmt; 
+                          remBalance = Math.abs(remBalance - principalAmt);
+                      
+                          let mortArray = [];
+                          mortArray.push(
+                            monthNum,
+                            principalAmt,
+                            interestAmt,
+                            sumInterest,
+                            remBalance);
+                      
+                          let inputRow = document.importNode(template.content, true);
+                          let inputCol = inputRow.querySelectorAll("td");
+                      
+                          inputCol[0].textContent = mortArray[0];
+                          inputCol[1].textContent = monthlyAmt.toLocaleString("en-us", {
+                            style: "currency",
+                            currency: "USD",});
+                          inputCol[2].textContent = mortArray[1].toLocaleString("en-us", {
+                            style: "currency",
+                            currency: "USD",});
+                          inputCol[3].textContent = mortArray[2].toLocaleString("en-us", {
+                            style: "currency",
+                            currency: "USD",});
+                          inputCol[4].textContent = mortArray[3].toLocaleString("en-us", {
+                            style: "currency",
+                            currency: "USD",});
+                          inputCol[5].textContent = mortArray[4].toLocaleString("en-us", {
+                            style: "currency",
+                            currency: "USD"});
+                      
+                          mortifyTable.appendChild(inputRow);}
+                      }
+                      
                         </code>
                 </pre>
         </div>
         <!-- Code Docs -->
         <div class="col-12 col-lg-4">
-          <p>The code is structured in one function</p>
-          <h5>displayMessage</h5>
-          <p>Prints out the message</p>
+          <p>
+            The code for Mortify has been separated in order to clearly show how
+            each section is calculated and put together. In total,
+            <b>Mortify()</b> contains 5 functions.
+          </p>
+          <h5>Mortify()</h5>
+          <p>
+            This is the entry point to our app. On click of the application's
+            "Mortify" button, Mortify() is called and in turn calls the two
+            display functions.
+          </p>
+          <h5>pullMortify()</h5>
+          <p>
+            This function is responsible for pulling the user input from the
+            HTML form and validating that all inputs are indeed numbers before
+            proceeding. If any of the inputs are not valid, then the function
+            returns an error alert.
+          </p>
+          <h5>calcTopMortgage()</h5>
+          <p>
+            After the inputs have been validated, they are passed along via
+            'mortArray'. This function then takes the inputs and calculates the
+            desired output values before placing them into 'topArray' to be once
+            again passed along and used elsewhere.
+          </p>
+          <h5>displayMonthly()</h5>
+          <p>
+            Finally, this function displays the top-level information by pulling
+            the desired information from the two previously-defined arrays and
+            formatting them as currency for the end user to view.
+          </p>
+          <h5>calcBotMortgage()</h5>
+          <p>
+            Now that an example has been established for how the previous three
+            functions can operate separately and pass information between them,
+            calcBotMortage() shows how they can also be streamlined into one
+            function.
+          </p>
+          <p>
+            It begins by taking the user input via <b>pullMortify()</b> and
+            establishing the values used for the loan payment schedule
+            calculations. Using an incrementing for loop, it calculates each
+            monthly payment throughout the loan term; breaks out the values by
+            type; and displays it in a table so that it is convenient and easy
+            for the end user to understand visually.
+          </p>
+          <p>
+            The table template is pulled from the HTML page and the desired
+            information is placed in the template using a
+            <b>querySelectorAll</b> to target the table data tags in the
+            template. Once the calculated information has been assembled in the
+            correct order, it is appended to the table one row at a time until
+            the for loop reaches its end condition.
+          </p>
         </div>
       </div>
     </main>
