@@ -44,7 +44,7 @@ body {
 body {
   display: flex;
   flex-direction: column;
-  background-color: var(--ay-light-color);
+  background-color: var(--ay-offwhite);
   backdrop-filter: brightness(100%);
 }
 
