@@ -229,23 +229,23 @@
           </p>
           <h5>Mortify()</h5>
           <p>
-            This is the entry point to our app. On click of the application's
-            "Mortify" button, Mortify() is called and in turn calls the two
-            display functions.
+            This is the controller for this application. Its sole responsibility is to run two functions, displayMonthly() and calcBotMortgage(), 
+            without needing to know the input values or how the outputs are calculated. On click of the application's "Mortify" button, Mortify() 
+            is called and in turn calls the two display functions which populate the page with calculations.
           </p>
           <h5>pullMortify()</h5>
           <p>
             This function is responsible for pulling the user input from the
-            HTML form and validating that all inputs are indeed numbers before
-            proceeding. If any of the inputs are not valid, then the function
-            returns an error alert.
+            HTML form and validating that all inputs are numbers before
+            proceeding. After the inputs have been validated, they are passed along as an array
+            'mortArray'. However, if any of the inputs are not valid, then the function
+            returns a sweetalert-styled error.
           </p>
           <h5>calcTopMortgage()</h5>
           <p>
-            After the inputs have been validated, they are passed along via
-            'mortArray'. This function then takes the inputs and calculates the
-            desired output values before placing them into 'topArray' to be once
-            again passed along and used elsewhere.
+            This function calculates the top-line information by taking the inputs and calculating
+            the desired output values before placing them into an array 'topArray' to be once
+            again passed along and used downstream.
           </p>
           <h5>displayMonthly()</h5>
           <p>
